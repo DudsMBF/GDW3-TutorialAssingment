@@ -5,71 +5,22 @@ using UnityEngine.UI;
 
 public class FontColor : MonoBehaviour
 {
-    public Button button;
+    [Range(0f, 1f)]
+    public float hueSpeed = 0.2f;
+    private Image _image;
+    private float _hue;
 
-    private Color newColor;
-    
-    private ColorBlock buttonColor;
-
-    public float cycleSpeed = 1f;
-
-    private float hue = 0f;
-    private float r = 1f;
-    private float g = 0f;
-    private float b = 0f;
-
-    void Start()
+    void Awake()
     {
-
-        buttonColor = button.GetComponent<Button>().colors;
+        _image = GetComponent<Image>();
+        Color.RGBToHSV(_image.color, out _hue, out _, out _);
     }
 
     void Update()
     {
-        ChangeColor();
-    }
+        _hue += hueSpeed * Time.deltaTime;
+        if (_hue > 1f) _hue -= 1f;
 
-    void ChangeColor()
-    {
-        ColorBlock colorBlock = buttonColor;
-
-        hue *= cycleSpeed * Time.deltaTime;
-
-
-        if (hue > 1f) {hue = 0f;}
-
-        newColor = Color.HSVToRGB(hue, 1, 1);
-
-        colorBlock.normalColor = newColor;
-
-        buttonColor = colorBlock;
-    }
-
-    void SetWheelColor()
-    {
-        if (r == 1f && g == 0)
-        {
-            b += cycleSpeed * Time.deltaTime;
-
-        } else if (r == 1f && g > 0)
-        {
-            g -= Time.deltaTime;
-        }
-        if (b == 1f && r > 0)
-        {
-            r -= cycleSpeed * Time.deltaTime;
-
-        } else if (b == 1f && r == 0)
-        {
-            g += cycleSpeed * Time.deltaTime;
-
-        }
-        if (g == 1f && b > 0)
-        {
-            b -= cycleSpeed * Time.deltaTime;
-        } else if (g == 1f && b == 0)
-        {
-            r += cycleSpeed * Time.deltaTime;
-        }
+        _image.color = Color.HSVToRGB(_hue, 1f, 1f);
     }
 }
